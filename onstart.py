@@ -13,7 +13,8 @@ from pathlib import Path
 # %%
 CONFIG = dict(
     app_name='Data Server MEG & EEG',
-    data_folder=Path('~').joinpath('nfsHome/database/meg-eeg-20220119'),
+    data_folder=Path(
+        '/nfs/diskstation/zccdata/nfsHome/database/meg-eeg-20220119'),
     log_folder=Path(__file__).joinpath('../log')
 )
 
