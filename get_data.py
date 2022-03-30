@@ -41,12 +41,12 @@ for meg_folder in tqdm(folder_table.query('mode=="MEG"')['path'], 'Read MEG Fold
 
     # -- %%
     # Parse MEG Epochs
-    meg_epochs = mne.Epochs(meg, events, tmin=-1.0, tmax=8.0, picks='mag')
+    meg_epochs = mne.Epochs(meg, events, tmin=-2.0, tmax=8.0, picks='mag')
     meg_data = meg_epochs.get_data()
 
     # -- %%
     # Parse EEG Epochs
-    eeg_epochs = mne.Epochs(meg, events, tmin=-1.0, tmax=8.0, picks='eeg')
+    eeg_epochs = mne.Epochs(meg, events, tmin=-2.0, tmax=8.0, picks='eeg')
     eeg_epochs = _match_montage(eeg_epochs)
     eeg_data = eeg_epochs.get_data()
 
@@ -61,3 +61,4 @@ for meg_folder in tqdm(folder_table.query('mode=="MEG"')['path'], 'Read MEG Fold
     scipy.io.savemat(file_path, mat)
 
 # %%
+
