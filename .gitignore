@@ -1,5 +1,7 @@
 log
+*.log
 data
 __pycache__
 example.ipynb
 example.html
+*.ipynb

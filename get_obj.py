@@ -13,7 +13,9 @@ folder_table
 # %%
 meg_folder = folder_table.query('mode=="MEG"').iloc[0]['path']
 eeg_folder = folder_table.query('mode=="EEG"').iloc[0]['path']
+meg_folder
 
+# %%
 # %%
 
 
@@ -38,6 +40,13 @@ epochs = mne.Epochs(meg, events, tmin=-0.2, tmax=4.0, picks='mag')
 epochs
 
 # %%
+epochs.info
+
+
+# %%
+mne.channels.get_builtin_montages()
+
+# %%
 fig = mne.viz.plot_sensors(epochs.info, show_names=True)
 for eid in events_id:
     evoked = epochs[eid].average()
@@ -58,4 +67,7 @@ for eid in events_id:
     fig = mne.viz.plot_evoked_joint(
         evoked, title='EEG Joint Plot Event ID:{}'.format(eid))
 
+# %%
+# %%
+epochs.ch_names
 # %%
