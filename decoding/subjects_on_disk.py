@@ -22,7 +22,7 @@ def _mode_by_name(name, default_mode='N.A.'):
 # %%
 
 
-def mk_file_table(raw_folder, select_mode='MEG'):
+def mk_subject_table(raw_folder, select_mode='MEG'):
     if isinstance(raw_folder, str):
         raw_folder = Path(raw_folder)
 
