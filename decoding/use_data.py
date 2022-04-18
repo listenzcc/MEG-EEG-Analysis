@@ -110,7 +110,7 @@ n_chans = X.shape[1]
 input_window_samples = X.shape[2]
 
 # %%
-valid_group = 1
+valid_group = 5
 
 # %%
 freq_shift = FrequencyShift(
@@ -119,7 +119,7 @@ freq_shift = FrequencyShift(
     max_delta_freq=2.  # the frequency shifts are sampled now between -2 and 2 Hz
 )
 
-sign_flip = SignFlip(probability=.1)
+sign_flip = SignFlip(probability=.3)
 
 transforms = [
     freq_shift,
@@ -131,7 +131,7 @@ lr = 0.0625 * 0.1
 weight_decay = 1.0
 
 batch_size = 50
-n_epochs = 200
+n_epochs = 500
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
