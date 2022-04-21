@@ -128,7 +128,7 @@ def decoding(X, Y, G, valid_group):
     clf = EEGClassifier(
         model,
         iterator_train=AugmentedDataLoader,
-        iterator_train__transforms=transforms,
+        # iterator_train__transforms=transforms,
         criterion=torch.nn.NLLLoss,
         optimizer=torch.optim.AdamW,
         optimizer__lr=lr,
