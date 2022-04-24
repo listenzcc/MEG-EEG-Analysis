@@ -1,5 +1,6 @@
 
 # %%
+import os
 import plotly.express as px
 import numpy as np
 from joblib import load
@@ -128,7 +129,7 @@ def decoding(X, Y, G, valid_group):
     clf = EEGClassifier(
         model,
         iterator_train=AugmentedDataLoader,
-        # iterator_train__transforms=transforms,
+        iterator_train__transforms=transforms,
         criterion=torch.nn.NLLLoss,
         optimizer=torch.optim.AdamW,
         optimizer__lr=lr,
@@ -162,11 +163,22 @@ def decoding(X, Y, G, valid_group):
 
 allow_override = False
 
+try:
+    os.mkdir('reports')
+except:
+    pass
+
 
 def decode_subject(subject):
     filenames = [e for e in Path('data').iterdir()
                  if e.name.endswith('.dump')
-                 and e.name.startswith(subject_name_table[subject])]
+                 and e.name.startswith(subject_name_table[subject])
+                 and e.name.split('.')[-2] != '10']
+
+    filenames = sorted(filenames)[2:]
+
+    assert len(filenames) == 8, 'Invalid filenames {}'.format(filenames)
+    LOGGER.debug('Using the filenames: {}'.format(filenames))
 
     X_raw, Y, G, ch_names = _get_x_y_g(filenames)
     for mode in ['EEG', 'MEG']:
