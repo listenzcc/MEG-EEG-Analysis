@@ -72,6 +72,8 @@ for folder in tqdm(known_folders, 'Reading Subjects'):
             events_id=events_id,
         )
 
+        epochs.save(output_name + '.epoch')
+
         dump(data, output_name)
         LOGGER.debug('Saved data into {}'.format(output_name))
     print('Done')
