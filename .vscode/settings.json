@@ -3,6 +3,7 @@
         "conv",
         "cuda",
         "FBCSP",
+        "sfreq",
         "skorch"
     ]
 }
