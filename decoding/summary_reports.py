@@ -9,6 +9,7 @@ import plotly.express as px
 # %%
 # folder = Path('./reports-transfer')
 folder = Path('./reports')
+# folder = Path('./reports-1-4-transform')
 
 files = [e for e in folder.iterdir() if e.is_file()
          and e.name.endswith('.txt')]
@@ -51,5 +52,10 @@ m.loc[:, 'std'] = s['value']
 m
 
 # %%
+
+# %%
+table.query('mode=="EEG"').describe()
+# %%
+table.query('mode=="MEG"').describe()
 
 # %%

@@ -41,7 +41,7 @@ def _get_x_y_g(filenames):
     for name in tqdm(filenames):
         d = load(name)
         run_idx = int(name.as_posix().split('.')[1])
-        x = d['data'][:, :, 200:]
+        x = d['data'][:, :, 450:]
         y = d['events'][:, -1]
         y[y == 5] = 0
         g = run_idx + y * 0
@@ -56,10 +56,15 @@ def _get_x_y_g(filenames):
 
 
 def _select_mode(X, ch_names, mode='MEG'):
+    # Select all the channels in advance,
+    # It will be changed if mode is in 'MEG' or 'EEG'
     select = [True for e in ch_names]
 
     if mode == 'MEG':
         select = [not e.startswith('EEG') for e in ch_names]
+        # Select [C]enter and [P]artial channels
+        for j, s in enumerate(select):
+            select[j] = s and ch_names[j][2] in ['C', 'P']
 
     if mode == 'EEG':
         select = [e.startswith('EEG') for e in ch_names]
@@ -181,7 +186,8 @@ def decode_subject(subject):
     LOGGER.debug('Using the filenames: {}'.format(filenames))
 
     X_raw, Y, G, ch_names = _get_x_y_g(filenames)
-    for mode in ['EEG', 'MEG']:
+
+    for mode in ['MEG', 'EEG']:
         X = _select_mode(X_raw, ch_names, mode=mode)
 
         X = _preprocess(X)

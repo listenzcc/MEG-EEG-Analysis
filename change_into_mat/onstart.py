@@ -17,9 +17,10 @@ CONFIG = dict(
         # '/nfs/diskstation/zccdata/nfsHome/database/meg-eeg-20220119'
         # '/nfs/diskstation/zccdata/nfsHome/database/MEG20220315'
         # '/nfs/diskstation/zccdata/nfsHome/database/MEG-EEG20220322'
-        '/nfs/diskstation/zccdata/nfsHome/database/MEG20220329'
+        # '/nfs/diskstation/zccdata/nfsHome/database/MEG20220329'
+        '/nfs/diskstation/zccdata/nfsHome/database/20220426'
     ),
-    log_folder=Path(__file__).joinpath('../log')
+    log_folder=Path(__file__).joinpath('../../log')
 )
 
 # %%

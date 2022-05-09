@@ -15,7 +15,7 @@ from tqdm.auto import tqdm
 folder_table
 
 # %%
-save_to_folder = Path.cwd().joinpath('data')
+save_to_folder = Path.cwd().joinpath('../data')
 
 # %%
 

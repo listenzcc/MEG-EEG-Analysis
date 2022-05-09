@@ -9,7 +9,7 @@ from sklearn import metrics
 
 from braindecode import EEGClassifier
 
-from braindecode.models import ShallowFBCSPNet
+from braindecode.models import ShallowFBCSPNet, Deep4Net
 from braindecode.models import to_dense_prediction_model
 from braindecode.models import get_output_shape
 
@@ -45,7 +45,7 @@ subject_name_table = dict(
     S04='MEG20220329'
 )
 
-input_window_samples = 1001
+input_window_samples = 601
 final_conv_length = 30
 sfreq = 200
 
@@ -118,7 +118,7 @@ def mk_transforms(sfreq=sfreq):
     return transforms
 
 
-def mk_clf(model, transforms, n_epochs, train_split):
+def mk_clf(model, transforms, n_epochs, train_split, batch_size=40):
     '''
     Make the clf from the model and transforms.
 
@@ -133,8 +133,6 @@ def mk_clf(model, transforms, n_epochs, train_split):
     # For deep4 they should be:
     # lr = 1 * 0.01
     # weight_decay = 0.5 * 0.001
-
-    batch_size = 64
 
     clf = EEGClassifier(
         model,
@@ -188,6 +186,7 @@ def read_subject(subject, input_window_samples=input_window_samples, window_stri
         for e in filenames:
             epochs = mne.read_epochs(e).pick_types(meg=True)
             epochs.events[:, -1] %= 5
+            epochs = epochs.crop(tmin=1)
             mag_epochs_list.append(epochs)
 
         eeg_epochs_list = []
@@ -196,6 +195,7 @@ def read_subject(subject, input_window_samples=input_window_samples, window_stri
             drop_ch_names = epochs.ch_names[35:]
             epochs.drop_channels(drop_ch_names)
             epochs.events[:, -1] %= 5
+            epochs = epochs.crop(tmin=1)
             eeg_epochs_list.append(epochs)
 
         print(len(mag_epochs_list), mag_epochs_list[0].get_data().shape)
@@ -241,7 +241,7 @@ def read_subject(subject, input_window_samples=input_window_samples, window_stri
     eeg_dataset.set_description(description, overwrite=True)
     mag_dataset.description, eeg_dataset.description
 
-    return mag_dataset, eeg_dataset
+    return mag_dataset, eeg_dataset, mag_epochs_list, eeg_epochs_list
 
 
 def preprocess_dataset(dataset, factor):
@@ -300,7 +300,9 @@ subject = 'S01'
 n_epochs = 500
 
 # Read files and make dataset
-mag_dataset, eeg_dataset = read_subject(subject)
+mag_dataset, eeg_dataset, mag_epochs_list, eeg_epochs_list = read_subject(subject)
+
+# %%
 
 # Preprocess dataset
 preprocess_dataset(mag_dataset, 1e14)
@@ -309,7 +311,7 @@ preprocess_dataset(eeg_dataset, 1e6)
 # %% --------------------------------------------------------------------------------
 # EEG dataset
 # Split the dataset
-train_set, valid_set = split_dataset(eeg_dataset)
+train_set, valid_set = split_dataset(eeg_dataset, valid_group=3)
 
 # Make the clf
 transforms = mk_transforms()
@@ -321,12 +323,13 @@ clf = mk_clf(model, transforms, n_epochs, predefined_split(valid_set))
 clf.fit(train_set, y=None, epochs=n_epochs)
 
 # %% --------------------------------------------------------------------------------
-y = clf.predict(valid_set)
-
 y_true = np.array([e[1] for e in valid_set])
 y_pred = clf.predict(valid_set)
 
 report = metrics.classification_report(y_true=y_true, y_pred=y_pred)
 print(report)
+
+confusion_matrix = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred)
+print(confusion_matrix)
 
 # %%
